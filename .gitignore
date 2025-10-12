@@ -1,0 +1,5 @@
+bot-token.txt
+node_modules/
+*.log
+downloads/
+.vscode/

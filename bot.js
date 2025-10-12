@@ -1,0 +1,117 @@
+const { parseSabyProfile } = require('./sabyParse/sabyParse.js');
+const { openBrowserForDownload } = require('./EGRULParse/EGRULExtractDownload.js');
+const { clearDirectory } = require('./EGRULParse/EGRULClearDirectory.js');
+const { getInfoFromEGRULExtract } = require('./EGRULParse/EGRULExtractParse.js');
+const { getBotToken } = require('./config');
+
+const fs = require('fs');
+const path = require('path');
+const TelegramBot = require('node-telegram-bot-api');
+
+const bot = new TelegramBot(getBotToken(), { polling: true });
+
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
+  const username = msg.from.first_name;
+  
+  bot.sendMessage(chatId, `Привет, ${username}! 👋 Я бот поиска информации об организациях. Отправь мне ИНН организации и я начну поиск!`, {
+  });
+});
+
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+  const text = msg.text;
+  console.log(chatId);
+  if (text.startsWith('/')) return;
+
+	if (isValidINN(text)) {
+    const downloadsPath = path.join(__dirname, 'EGRULParse', 'downloads', chatId.toString());
+
+		(async () => {
+      const progressMsg = await bot.sendMessage(chatId, '🔍 Ищу данные по ИНН...');
+			//const result = await parseSabyProfile(text);
+			//const textResult = formatingForTelegram(result);
+
+      await bot.editMessageText('💾 Скачиваю выписку...', {
+        chat_id: chatId,
+        message_id: progressMsg.message_id
+      });
+
+			const downloadStatus = await openBrowserForDownload(text, chatId);
+			if (downloadStatus) {
+				//await new Promise(resolve => setTimeout(resolve, 3000));
+        await bot.editMessageText('📊 Анализирую выписку...', {
+          chat_id: chatId,
+          message_id: progressMsg.message_id
+        });
+      // Получаем последний файл
+      	const latestFile = getLatestFile(downloadsPath);
+        
+        let info = await getInfoFromEGRULExtract(latestFile.path);
+        const textResult = formatingForTelegram(info);
+
+				await bot.sendDocument(chatId, latestFile.path, {
+					caption: `${textResult}`
+				});
+
+        clearDirectory(downloadsPath);
+
+        await bot.deleteMessage(chatId, progressMsg.message_id);
+			}
+				
+		})();
+	} else {
+		bot.sendMessage(chatId, 'Неправильный ИНН или ошибка, ХЗ');
+	}
+})
+
+function formatingForTelegram (parseResult) {
+	if ('error' in parseResult) {
+		return 'Информация об организации не найдена или организация не существует.'
+	} else {
+		return `Наименование: ${parseResult.name}\nПолное наименование: ${parseResult.fullName}\nАдрес: ${parseResult.address}\nИНН: ${parseResult.inn}\nКПП: ${parseResult.kpp}`
+	}
+}
+
+function isValidINN(str) {
+    return /^\d{10}$/.test(str);
+}
+
+
+// Функция для получения последнего файла
+function getLatestFile(directory) {
+  try {
+    // Проверяем существует ли директория
+    if (!fs.existsSync(directory)) {
+      console.log('Директория не существует:', directory);
+      return null;
+    }
+    
+    const files = fs.readdirSync(directory)
+      .map(file => {
+        const filePath = path.join(directory, file);
+        const stats = fs.statSync(filePath);
+        return {
+          name: file,
+          path: filePath,
+          time: stats.mtime.getTime(), // время последнего изменения
+          size: stats.size
+        };
+      })
+      .filter(file => fs.statSync(file.path).isFile()) // только файлы, не папки
+      .sort((a, b) => b.time - a.time); // сортируем по времени (новые сначала)
+    
+    console.log('Найдено файлов:', files.length);
+    files.forEach((file, index) => {
+      console.log(`${index + 1}. ${file.name} (${new Date(file.time).toLocaleString()})`);
+    });
+    
+    return files.length > 0 ? files[0] : null;
+    
+  } catch (error) {
+    console.error('Ошибка при чтении директории:', error);
+    return null;
+  }
+}
+
+console.log('Бот запущен и готов к работе...');
