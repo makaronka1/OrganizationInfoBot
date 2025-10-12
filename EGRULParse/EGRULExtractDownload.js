@@ -19,9 +19,11 @@ async function openBrowserForDownload (INN, chatId) {
 
   await page.locator('#btnSearch').click({delay: 237});
 
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
   const downloadButton = await page.waitForSelector(
     '.res-line button', 
-    { timeout: 30000 }
+    { timeout: 30000 } // 30 секунд timeout
   );
   await page.locator('.res-line button').click({delay: 100});
   await downloadExtract(page, chatId.toString());
