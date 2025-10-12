@@ -3,13 +3,12 @@ const path = require('path');
 
 function clearDirectory(directoryPath) {
   try {
-    // Проверяем существует ли директория
+
     if (!fs.existsSync(directoryPath)) {
       console.log(`❌ Директория не существует: ${directoryPath}`);
       return { success: false, error: 'Directory does not exist' };
     }
 
-    // Читаем содержимое директории
     const items = fs.readdirSync(directoryPath);
     let deletedCount = 0;
     let errorCount = 0;
@@ -21,12 +20,10 @@ function clearDirectory(directoryPath) {
         const stats = fs.statSync(itemPath);
         
         if (stats.isFile()) {
-          // Удаляем файл
           fs.unlinkSync(itemPath);
           console.log(`✅ Удален файл: ${item}`);
           deletedCount++;
         } else if (stats.isDirectory()) {
-          // Пропускаем поддиректории или удаляем рекурсивно
           console.log(`⚠️ Пропущена папка: ${item}`);
         }
       } catch (error) {

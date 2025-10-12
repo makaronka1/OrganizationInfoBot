@@ -113,10 +113,9 @@ function formatAddress(address) {
 function cleanAddressLocality(locality) {
 	if (!locality) return null;
 
-	// Убираем двойные точки и лишние пробелы
 	return locality
-		.replace(/г\.\./g, 'г.') // заменяем "г.." на "г."
-		.replace(/\s+/g, ' ')    // убираем лишние пробелы
+		.replace(/г\.\./g, 'г.')
+		.replace(/\s+/g, ' ')    
 		.trim();
 }
 

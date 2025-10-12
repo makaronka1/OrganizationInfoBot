@@ -100,20 +100,6 @@ function getInfo(searchString, massive) {
   return resultString;
 }
 
-// (async () => {
-// 	const lines = await extractTextLines(pdfPath);
-// 	const table = extractTable(lines);
-
-// 	const mergedArray = table.map(r => 
-// 		`${r["№ п/п"]} ${r["Наименование показателя"]} ${r["Значение показателя"]}`
-// 	);
-// 	getInfo('Полное наименование на русском языке', mergedArray);
-// 	getInfo('Сокращенное наименование на русском языке', mergedArray);
-// 	getInfo('Адрес юридического лица', mergedArray);
-// 	getInfo('ИНН юридического лица', mergedArray);
-// 	getInfo('КПП юридического лица', mergedArray);
-// })();
-
 async function getInfoFromEGRULExtract(extractPath) {
 	const lines = await extractTextLines(extractPath);
 	const table = extractTable(lines);

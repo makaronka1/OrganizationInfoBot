@@ -29,8 +29,6 @@ bot.on('message', (msg) => {
 
 		(async () => {
       const progressMsg = await bot.sendMessage(chatId, '🔍 Ищу данные по ИНН...');
-			//const result = await parseSabyProfile(text);
-			//const textResult = formatingForTelegram(result);
 
       await bot.editMessageText('💾 Скачиваю выписку...', {
         chat_id: chatId,
@@ -39,12 +37,11 @@ bot.on('message', (msg) => {
 
 			const downloadStatus = await openBrowserForDownload(text, chatId);
 			if (downloadStatus) {
-				//await new Promise(resolve => setTimeout(resolve, 3000));
         await bot.editMessageText('📊 Анализирую выписку...', {
           chat_id: chatId,
           message_id: progressMsg.message_id
         });
-      // Получаем последний файл
+
       	const latestFile = getLatestFile(downloadsPath);
         
         let info = await getInfoFromEGRULExtract(latestFile.path);
@@ -78,10 +75,10 @@ function isValidINN(str) {
 }
 
 
-// Функция для получения последнего файла
+
 function getLatestFile(directory) {
   try {
-    // Проверяем существует ли директория
+
     if (!fs.existsSync(directory)) {
       console.log('Директория не существует:', directory);
       return null;
@@ -94,12 +91,12 @@ function getLatestFile(directory) {
         return {
           name: file,
           path: filePath,
-          time: stats.mtime.getTime(), // время последнего изменения
+          time: stats.mtime.getTime(),
           size: stats.size
         };
       })
-      .filter(file => fs.statSync(file.path).isFile()) // только файлы, не папки
-      .sort((a, b) => b.time - a.time); // сортируем по времени (новые сначала)
+      .filter(file => fs.statSync(file.path).isFile())
+      .sort((a, b) => b.time - a.time);
     
     console.log('Найдено файлов:', files.length);
     files.forEach((file, index) => {
