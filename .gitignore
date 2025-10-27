@@ -1,5 +1,6 @@
-bot-token.txt
 node_modules/
 *.log
-downloads/
+downloads/*
+!downloads/.gitkeep
 .vscode/
+bot-token.txt
