@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
 
+process.env.NTBA_FIX_350 = '1';
+
 const bot = new TelegramBot(getBotToken(), { polling: true });
 
 bot.onText(/\/start/, (msg) => {
@@ -48,7 +50,8 @@ bot.on('message', (msg) => {
         const textResult = formatingForTelegram(info);
 
 				await bot.sendDocument(chatId, latestFile.path, {
-					caption: `${textResult}`
+					caption: `${textResult}`,
+					mimeType: 'application/pdf'
 				});
 
         clearDirectory(downloadsPath);
@@ -58,7 +61,7 @@ bot.on('message', (msg) => {
 				
 		})();
 	} else {
-		bot.sendMessage(chatId, 'Неправильный ИНН или ошибка, ХЗ');
+		bot.sendMessage(chatId, 'Неправильный ИНН или ошибка');
 	}
 })
 
