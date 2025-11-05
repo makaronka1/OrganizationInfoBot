@@ -1,10 +1,13 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Путь к файлу с токеном
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const tokenPath = path.join(__dirname, 'bot-token.txt');
 
-function getBotToken() {
+export function getBotToken() {
   try {
     // Проверяем существование файла
     if (!fs.existsSync(tokenPath)) {
@@ -30,5 +33,3 @@ function getBotToken() {
     process.exit(1);
   }
 }
-
-module.exports = { getBotToken };

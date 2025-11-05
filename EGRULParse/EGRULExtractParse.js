@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const pdfjsLib = require("pdfjs-dist/legacy/build/pdf");
+import fs from 'fs';
+import path from 'path';
+import pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
 
 
 // --- функция извлечения текста с позиции ---
@@ -100,7 +100,7 @@ function getInfo(searchString, massive) {
   return resultString;
 }
 
-async function getInfoFromEGRULExtract(extractPath) {
+export async function getInfoFromEGRULExtract(extractPath) {
 	const lines = await extractTextLines(extractPath);
 	const table = extractTable(lines);
 
@@ -121,7 +121,3 @@ async function getInfoFromEGRULExtract(extractPath) {
 		'kpp': KPP
 	}
 }
-
-module.exports = {
-	getInfoFromEGRULExtract,
-};

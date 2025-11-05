@@ -1,6 +1,6 @@
-const { chromium } = require('playwright');
+import { chromium } from 'playwright';
 
-async function parseSabyProfile(inn) {
+export async function parseSabyProfile(inn) {
 	const browser = await chromium.launch({
 		headless: true
 	});
@@ -118,7 +118,3 @@ function cleanAddressLocality(locality) {
 		.replace(/\s+/g, ' ')    
 		.trim();
 }
-
-module.exports = {
-	parseSabyProfile,
-};

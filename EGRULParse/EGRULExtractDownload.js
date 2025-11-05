@@ -1,16 +1,20 @@
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
+import { chromium } from 'playwright';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let globalBrowser = null;
 
-async function openBrowserForDownload(INN, chatId) {
+export async function openBrowserForDownload(INN, chatId) {
   const startTime = Date.now();
   console.log(`[${new Date().toISOString()}] Начало процесса загрузки для ИНН: ${INN}`);
   
   if (!globalBrowser) {
     globalBrowser = await chromium.launch({
-      headless: false,
+      headless: true,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -93,11 +97,11 @@ async function openBrowserForDownload(INN, chatId) {
 }
 
 // Функция для закрытия глобального браузера
-async function closeGlobalBrowser() {
+export async function closeGlobalBrowser() {
   if (globalBrowser) {
     await globalBrowser.close();
     globalBrowser = null;
   }
 }
 
-module.exports = { openBrowserForDownload, closeGlobalBrowser };
+// ESM exports above

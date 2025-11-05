@@ -1,12 +1,16 @@
-const { parseSabyProfile } = require('./sabyParse/sabyParse.js');
-const { openBrowserForDownload } = require('./EGRULParse/EGRULExtractDownload.js');
-const { clearDirectory } = require('./EGRULParse/EGRULClearDirectory.js');
-const { getInfoFromEGRULExtract } = require('./EGRULParse/EGRULExtractParse.js');
-const { getBotToken } = require('./config');
+import { parseSabyProfile } from './sabyParse/sabyParse.js';
+import { openBrowserForDownload } from './EGRULParse/EGRULExtractDownload.js';
+import { clearDirectory } from './EGRULParse/EGRULClearDirectory.js';
+import { getInfoFromEGRULExtract } from './EGRULParse/EGRULExtractParse.js';
+import { getBotToken } from './config.js';
 
-const fs = require('fs');
-const path = require('path');
-const TelegramBot = require('node-telegram-bot-api');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import TelegramBot from 'node-telegram-bot-api';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 process.env.NTBA_FIX_350 = '1';
 
