@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-function clearDirectory(directoryPath) {
+export function clearDirectory(directoryPath) {
   try {
 
     if (!fs.existsSync(directoryPath)) {
@@ -45,7 +45,3 @@ function clearDirectory(directoryPath) {
     return { success: false, error: error.message };
   }
 }
-
-module.exports = {
-	clearDirectory,
-};
